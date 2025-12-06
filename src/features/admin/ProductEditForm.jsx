@@ -42,7 +42,7 @@ const valSchema = Yup.object({
     .required(),
 });
 
-export default function ProductAddForm() {
+export default function ProductEditForm({product}) {
 
   const nav = useNavigate();
 
@@ -59,13 +59,13 @@ export default function ProductAddForm() {
         <CardContent>
           <Formik
             initialValues={{
-              title: '',
-              detail: '',
-              price: '',
-              category: '',
-              brand: '',
-              image: '',
-              imageReview: '',
+              title: product.title,
+              detail: product.detail,
+              price: product.price,
+              category: product.category,
+              brand: product.brand,
+              image: '' ,
+              imageReview: product.image,
             }}
 
             onSubmit={async (val) => {
@@ -133,6 +133,7 @@ export default function ProductAddForm() {
                   </div>
 
                   <Select
+                  value={values.category}
                     name="category"
                     onValueChange={(value) => setFieldValue('category', value)}
                   >
@@ -153,6 +154,7 @@ export default function ProductAddForm() {
 
 
                   <Select
+                  value={values.brand}
                     name="brand"
                     onValueChange={(value) => setFieldValue('brand', value)}
                   >

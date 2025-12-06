@@ -4,6 +4,7 @@ import { useGetProductsQuery } from '../products/productApi';
 import { base } from '../../app/mainApi';
 import { DeleteIcon, EditIcon, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import { RemoveProduct } from './RemoveProduct';
 
 export default function AdminPanel(){
     const nav = useNavigate();
@@ -40,8 +41,8 @@ export default function AdminPanel(){
         <CardDescription>{product.detail}</CardDescription>
       </CardHeader>
       <CardFooter className='gap-3 max-sm:flex-col max-sm:items-stretch'>
-        <Button><EditIcon/></Button>
-        <Button className="bg-red-700"><Trash/></Button>
+        <Button onClick={() => nav(`/product-edit/${product._id}`)} ><EditIcon/></Button>
+        <RemoveProduct id = {product._id} />
       </CardFooter>
     </Card>
         ))}
