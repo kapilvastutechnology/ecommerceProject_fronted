@@ -18,6 +18,8 @@ import toast from "react-hot-toast"
 import { LockKeyhole, LockKeyholeIcon, LockKeyholeOpenIcon, } from "lucide-react"
 import { useState } from "react"
 import { Spinner } from "../../components/ui/spinner"
+import { useDispatch } from "react-redux"
+import { setUser } from "../user/userSlice"
 
 const loginSchema = Yup.object({
   email: Yup.string().email().required(),
@@ -27,6 +29,7 @@ const loginSchema = Yup.object({
 export default function Login() {
   const nav = useNavigate();
   const [show, setShow] = useState(false);
+  const dispatch = useDispatch();
   const [loginUser, { isLoading }] = useUserLoginMutation();
   return (
     <div className="p-5">
@@ -50,8 +53,10 @@ export default function Login() {
             onSubmit={async (val) => {
               try {
                 const response = await loginUser(val).unwrap();
+                console.log(response)
                 toast.success('Login successful');;
-
+                dispatch(setUser(response.data));
+                nav(-1);
               } catch (err) {
                 toast.error(err.data.data);
 

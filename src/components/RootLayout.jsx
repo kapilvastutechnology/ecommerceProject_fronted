@@ -6,7 +6,10 @@ export default function RootLayout() {
     return (
         <>
             <Header/>
-            <Outlet/>
+            <main className="p-5" >
+             <Outlet/>
+            </main>
+            
         </>
     )
 }
