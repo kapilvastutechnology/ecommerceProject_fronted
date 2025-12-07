@@ -15,15 +15,15 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "../../components/ui/textarea"
 import { Formik } from "formik"
 import * as Yup from 'yup'
-
-import { Spinner } from "../../components/ui/spinner"
-import toast from "react-hot-toast"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router"
-import { useCreateProductMutation } from "../products/productApi"
+import { Spinner } from "@/components/ui/spinner"
+import { Textarea } from "@/components/ui/textarea"
+import { base } from "@/app/mainApi"
+import { useUpdateProductMutation } from "../products/productApi"
+import toast from "react-hot-toast"
 
 
 const valSchema = Yup.object({
@@ -34,21 +34,22 @@ const valSchema = Yup.object({
   brand: Yup.string().required(),
   image: Yup.mixed()
     .test('fileType', 'Unsupported File Format', (val) => {
+      if (!val) return true
       return val && ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'].includes(val.type);
     })
     .test('fileSize', 'file is too large', (val) => {
+      if (!val) return true
       return val && val.size <= 5 * 1024 * 1024;
-    })
-    .required(),
+    }),
 });
 
-export default function ProductEditForm({product}) {
+export default function ProductEditForm({ product }) {
 
   const nav = useNavigate();
 
   const { user } = useSelector((state) => state.userSlice);
 
-  const [addProduct, { isLoading }] = useCreateProductMutation();
+  const [updateProduct, { isLoading }] = useUpdateProductMutation();
   return (
     <div>
 
@@ -62,9 +63,10 @@ export default function ProductEditForm({product}) {
               title: product.title,
               detail: product.detail,
               price: product.price,
+              stock: product.stock,
               category: product.category,
               brand: product.brand,
-              image: '' ,
+              image: '',
               imageReview: product.image,
             }}
 
@@ -74,14 +76,18 @@ export default function ProductEditForm({product}) {
                 formData.append('title', val.title);
                 formData.append('detail', val.detail);
                 formData.append('price', val.price);
+                formData.append('stock', val.stock);
                 formData.append('category', val.category);
                 formData.append('brand', val.brand);
-                formData.append('image', val.image);
-                await addProduct({
+                if (val.image){
+                    formData.append('image', val.image);
+                }
+                await updateProduct({
                   token: user.token,
-                  body: formData
+                  body: formData,
+                  id: product._id
                 }).unwrap();
-                toast.success('Product added successfully');
+                toast.success('Product updated successfully');
                 nav(-1);
               } catch (err) {
                 toast.error(err.data.message);
@@ -132,9 +138,23 @@ export default function ProductEditForm({product}) {
                     {touched.price && errors.price && <p className="text-red-500">{errors.price}</p>}
                   </div>
 
+
+                   <div className="grid gap-2">
+                      <Label htmlFor="stock">Stock</Label>
+                      <Input
+                      name="stock"
+                      onChange={handleChange}
+                      value={values.stock}
+                      id="stock"
+                      type="number"
+                      placeholder="product stock"
+                      />
+                      {touched.stock && errors.stock && <p className="text-red-500">{errors.stock}</p>} 
+                    </div>
+
                   <Select
-                  value={values.category}
                     name="category"
+                    value={values.category}
                     onValueChange={(value) => setFieldValue('category', value)}
                   >
                     <SelectTrigger
@@ -154,8 +174,8 @@ export default function ProductEditForm({product}) {
 
 
                   <Select
-                  value={values.brand}
                     name="brand"
+                    value={values.brand}
                     onValueChange={(value) => setFieldValue('brand', value)}
                   >
                     <SelectTrigger className="w-full">
@@ -190,7 +210,7 @@ export default function ProductEditForm({product}) {
 
                     />
                     {touched.image && errors.image && <p className="text-red-500">{errors.image}</p>}
-                    {values.imageReview && !errors.image && <img src={values.imageReview} alt="" />}
+                    {values.imageReview && !errors.image && <img src={!values.image ? `${base}/${values.imageReview}` : values.imageReview} alt="" />}
                   </div>
 
                   {isLoading ? <Button size="sm" variant="outline" disabled className="w-full mt-5">
@@ -204,13 +224,19 @@ export default function ProductEditForm({product}) {
 
               </form>
 
+
             )}
           </Formik>
+
 
         </CardContent>
 
       </Card>
 
+
+
     </div>
   )
 }
+
+

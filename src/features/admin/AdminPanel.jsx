@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardDescription, CardTitle, CardFooter } from '@/components/ui/card'
 import { useGetProductsQuery } from '../products/productApi';
 import { base } from '../../app/mainApi';
-import { DeleteIcon, EditIcon, Trash } from 'lucide-react';
+import { EditIcon } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { RemoveProduct } from './RemoveProduct';
 
@@ -18,7 +18,7 @@ export default function AdminPanel(){
     console.log(data);
   return (
 <div>
-    <div className='p-5' >
+    <div className='p-5 flex justify-end' >
         <Button
         onClick={()=> nav('/product-add')}
         className="bg-green-400" >Product Add</Button>
@@ -39,6 +39,7 @@ export default function AdminPanel(){
         <CardTitle>{product.title}</CardTitle>
         <CardTitle>{product.createdAt}</CardTitle>
         <CardDescription>{product.detail}</CardDescription>
+          <CardDescription>Price:{product.price}</CardDescription>
       </CardHeader>
       <CardFooter className='gap-3 max-sm:flex-col max-sm:items-stretch'>
         <Button onClick={() => nav(`/product-edit/${product._id}`)} ><EditIcon/></Button>

@@ -31,6 +31,7 @@ const valSchema = Yup.object({
   detail: Yup.string().min(10).required(),
   price: Yup.string().required(),
   category: Yup.string().required(),
+  stock: Yup.string().required(),
   brand: Yup.string().required(),
   image: Yup.mixed()
     .test('fileType', 'Unsupported File Format', (val) => {
@@ -63,6 +64,7 @@ export default function ProductAddForm() {
               detail: '',
               price: '',
               category: '',
+              stock:'',
               brand: '',
               image: '',
               imageReview: '',
@@ -76,6 +78,7 @@ export default function ProductAddForm() {
                 formData.append('price', val.price);
                 formData.append('category', val.category);
                 formData.append('brand', val.brand);
+                formData.append('stock', val.stock);
                 formData.append('image', val.image);
                 await addProduct({
                   token: user.token,
@@ -130,6 +133,20 @@ export default function ProductAddForm() {
                       placeholder="product price"
                     />
                     {touched.price && errors.price && <p className="text-red-500">{errors.price}</p>}
+                  </div>
+
+
+                   <div className="grid gap-2">
+                    <Label htmlFor="stock ">Stock</Label>
+                    <Input
+                      name="stock"
+                      onChange={handleChange}
+                      value={values.stock}
+                      id="stock"
+                      type="number"
+                      placeholder="product stock"
+                    />
+                    {touched.stock && errors.stock && <p className="text-red-500">{errors.stock}</p>}
                   </div>
 
                   <Select

@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import { useGetProductQuery } from "../products/productApi";
 import ProductEditForm from "./ProductEditForm";
 
+
 export default function ProductEdit() {
     const {id} = useParams();
     const {isLoading, error, data} = useGetProductQuery(id);
@@ -13,9 +14,10 @@ export default function ProductEdit() {
     }
     console.log(data);
     return (
-        <div>
+       <div>
             <h1 className='text-2xl font-bold' >Product Edit</h1>
-            <ProductEditForm product={data.data} />
+            <ProductEditForm product={data?.product} />
         </div>
+     
     )
 }
